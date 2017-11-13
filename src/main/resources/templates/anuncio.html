@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>C2B Mestrado</title>
+
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap.min.css" />
+</head>
+<body>
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">C2B</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#">Início</a></li>
+                <li><a href="#">Login</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div id="main" class="container-fluid">
+    <h3 class="page-header">Incluir Anúncio de Compra</h3>
+    <form class="form-horizontal" th:object="${anuncio}" th:action="@{/save}" method="POST" style="margin: 10px" >
+        <div class="row">
+            <fieldset>
+                <div class="form-group col-md-4">
+                    <label>Descrição do Produto</label>
+                    <input type="text" class="form-control" id="descricao" autofocus="autofocus"
+                           placeholder="Informe a Descrição" maxlength="50"/>
+                </div>
+
+                <div class="form-group col-md-4">
+                    <label>Categoria</label>
+                    <input type="text" class="form-control" id="categoria"
+                           autofocus="autofocus" placeholder="Informe a Categoria"/>
+                </div>
+
+                <div class="form-group col-md-4">
+                    <label>Valor</label>
+                    <input type="text" class="form-control" id="valor" autofocus="autofocus"
+                           placeholder="Informe o Valor"/>
+                </div>
+            </fieldset>
+        </div>
+        <hr />
+        <div id="actions" class="row">
+            <div class="col-md-12">
+                <button type="submit" class="btn btn-primary">Salvar</button>
+                <a th:href="@{/listaAnuncios}" class="btn btn-default">Cancelar</a>
+            </div>
+        </div>
+    </form>
+
+</div>
+
+<script src="http://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
+</body>
+</html>
