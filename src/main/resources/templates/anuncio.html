@@ -36,19 +36,22 @@
             <fieldset>
                 <div class="form-group col-md-4">
                     <label>Descrição do Produto</label>
-                    <input type="text" class="form-control" id="descricao" autofocus="autofocus"
+                    <input th:field="*{descricao}" type="text" class="form-control" id="descricao" autofocus="autofocus"
                            placeholder="Informe a Descrição" maxlength="50"/>
                 </div>
 
                 <div class="form-group col-md-4">
                     <label>Categoria</label>
-                    <input type="text" class="form-control" id="categoria"
-                           autofocus="autofocus" placeholder="Informe a Categoria"/>
+                    <select th:field="*{idCategoria}" class="form-control" >
+                        <option th:each="dropDownItem : ${categoriaList}"
+                                th:value="${dropDownItem.id}"
+                                th:text="${dropDownItem.descricao}" />
+                    </select>
                 </div>
 
                 <div class="form-group col-md-4">
                     <label>Valor</label>
-                    <input type="text" class="form-control" id="valor" autofocus="autofocus"
+                    <input th:field="*{valor}" type="text" class="form-control" id="valor" autofocus="autofocus"
                            placeholder="Informe o Valor"/>
                 </div>
             </fieldset>

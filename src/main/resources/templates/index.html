@@ -68,7 +68,6 @@
                 <thead>
                 <tr>
                     <th>Descrição</th>
-                    <th>Categoria</th>
                     <th>Valor</th>
                     <th class="actions">Ações</th>
                 </tr>
@@ -77,7 +76,6 @@
 
                 <tr th:each="anuncio : ${anuncios}">
                     <td th:text="${anuncio.descricao}"></td>
-                    <td th:text="${anuncio.idCategoria}"></td>
                     <td th:text="${anuncio.valor}"></td>
                     <td class="actions">
                         <a class="btn btn-success btn-xs" href="view.html">Visualizar</a>

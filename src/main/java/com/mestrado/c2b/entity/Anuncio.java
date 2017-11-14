@@ -26,15 +26,12 @@ public class Anuncio implements Serializable{
     private Long id;
 
     @Column(nullable = false, length = 50)
-    @NotBlank(message = "Descrição é uma informação obrigatória.")
     private String descricao;
 
     @Column(nullable = false)
-    @NotBlank(message = "Categoria é uma informação obrigatória.")
     private Long idCategoria;
 
     @Column(nullable = false)
-    @NotBlank(message = "Valor é uma informação obrigatória.")
     private BigDecimal valor;
 
     private Status status;
