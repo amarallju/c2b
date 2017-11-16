@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>C2B Mestrado</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <link href="css/style.css" rel="stylesheet"/>
+
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap.min.css" />
+
+    <script src="http://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
+
+</head>
+<body>
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">C2B</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#">Início</a></li>
+                <li><a href="#">Login</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div id="main" class="container-fluid">
+    <h3 class="page-header">Lista de Anúncios</h3>
+    <form class="form-horizontal" th:object="${anuncio}" th:action="@{/listaBydescricao}" method="POST" style="margin: 10px" >
+    <div id="top" class="row">
+        <div class="col-md-3">
+            <h2>Anúncios</h2>
+        </div>
+
+        <div class="col-md-6">
+            <div class="input-group h2">
+                <input th:field="*{descricao}" name="data[search]" class="form-control" id="search" type="text" placeholder="Pesquisar Itens" />
+                <span class="input-group-btn">
+                <button class="btn btn-primary" type="submit">
+                    <span class="glyphicon glyphicon-search"></span>
+                </button>
+            </span>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <a th:href="@{/add}" class="btn btn-primary pull-right h2">Novo Anúncio</a>
+        </div>
+
+    </div> <!-- /#top -->
+
+    <hr />
+    <div id="list" class="row">
+        <div class="table-responsive col-md-12">
+            <table class="table table-striped" cellspacing="0" cellpadding="0">
+                <thead>
+                <tr>
+                    <th>Descrição</th>
+                    <th>Valor</th>
+                    <th class="actions">Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <tr th:each="anuncio : ${anuncios}">
+                    <td th:text="${anuncio.descricao}"></td>
+                    <td th:text="${anuncio.valor}"></td>
+                    <td class="actions">
+                        <a class="btn btn-success btn-xs" href="view.html">Visualizar</a>
+                        <a class="btn btn-warning btn-xs" href="edit.html">Proposta</a>
+                        <a class="btn btn-danger btn-xs"  href="#" data-toggle="modal" data-target="#delete-modal">e-mail</a>
+                        <a class="btn btn-warning btn-xs" href="edit.html">Compartilhar</a>
+                    </td>
+                </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+    </div> <!-- /#list -->
+
+    <div id="bottom" class="row">
+        <div class="col-md-12">
+
+            <ul class="pagination">
+                <li class="disabled"><a>&lt; Anterior</a></li>
+                <li class="disabled"><a>1</a></li>
+                <li><a href="#">2</a></li>
+                <li><a href="#">3</a></li>
+                <li class="next"><a href="#" rel="next">Próximo &gt;</a></li>
+            </ul><!-- /.pagination -->
+
+        </div>
+    </div> <!-- /#bottom -->
+    </form>
+</div>
+
+</body>
+</html>
