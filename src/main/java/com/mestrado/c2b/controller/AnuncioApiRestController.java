@@ -4,14 +4,12 @@ import com.mestrado.c2b.entity.Anuncio;
 import com.mestrado.c2b.entity.Categoria;
 import com.mestrado.c2b.repository.AnuncioRepositoty;
 import com.mestrado.c2b.repository.CategoriaRepositoty;
+import com.mestrado.c2b.repository.PropostaAnuncioRepositoty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -23,11 +21,23 @@ public class AnuncioApiRestController {
 
     private AnuncioRepositoty anuncioRepositoty;
     private CategoriaRepositoty categoriaRepositoty;
+    private PropostaAnuncioRepositoty propostaAnuncioRepositoty;
 
     @Autowired
-    public AnuncioApiRestController( AnuncioRepositoty anuncioRepositoty, CategoriaRepositoty categoriaRepositoty) {
+    public AnuncioApiRestController( AnuncioRepositoty anuncioRepositoty, CategoriaRepositoty categoriaRepositoty,
+            PropostaAnuncioRepositoty propostaAnuncioRepositoty) {
         this.anuncioRepositoty = anuncioRepositoty;
         this.categoriaRepositoty = categoriaRepositoty;
+        this.propostaAnuncioRepositoty = propostaAnuncioRepositoty;
+    }
+
+    @GetMapping(value = "/detalheAnuncio{id}")
+    public String detalheAnuncio(@RequestParam(value="id", defaultValue="10") Long id, Model model) {
+
+        model.addAttribute("propostaList", propostaAnuncioRepositoty.findByIdAnuncio(id));
+        model.addAttribute("anuncio", anuncioRepositoty.findById(id));
+
+        return "detalheAnuncio";
     }
 
     @GetMapping("/add")

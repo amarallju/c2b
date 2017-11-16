@@ -20,4 +20,6 @@ public interface AnuncioRepositoty extends CrudRepository<Anuncio, Long> {
      * @return lista de anuncio
      */
     List<Anuncio> findByDescricao(String descricao);
+
+    Anuncio findById(Long id);
 }

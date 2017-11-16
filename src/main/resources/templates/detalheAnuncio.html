@@ -37,29 +37,30 @@
 </nav>
 
 <div id="main" class="container-fluid">
-    <h3 class="page-header">Lista de Anúncios</h3>
+    <h3 class="page-header">Detalhe do Anúncio</h3>
     <form class="form-horizontal" th:object="${anuncio}" th:action="@{/listaBydescricao}" method="POST" style="margin: 10px" >
-    <div id="top" class="row">
-        <div class="col-md-3">
-            <h2>Anúncios</h2>
-        </div>
 
-        <div class="col-md-6">
-            <div class="input-group h2">
-                <input th:field="*{descricao}" name="data[search]" class="form-control" id="search" type="text" placeholder="Pesquisar Itens" />
-                <span class="input-group-btn">
-                <button class="btn btn-primary" type="submit">
-                    <span class="glyphicon glyphicon-search"></span>
-                </button>
-            </span>
+            <div class="row">
+                <div class="col-md-4">
+                    <p><strong>Descrição</strong></p>
+                    <p th:text="${descricao}"></p>
+                </div>
+
+                <div class="col-md-4">
+                    <p><strong>Categoria</strong></p>
+                    <p th:text="${idCategoria}"></p>
+                </div>
+
+                <div class="col-md-4">
+                    <p><strong>Valor</strong></p>
+                    <p th:text="${valor}"></p>
+                </div>
+
+                <div class="col-md-4">
+                    <p><strong>Situaçao</strong></p>
+                    <p th:text="${status}"></p>
+                </div>
             </div>
-        </div>
-
-        <div class="col-md-3">
-            <a th:href="@{/add}" class="btn btn-primary pull-right h2">Novo Anúncio</a>
-        </div>
-
-    </div> <!-- /#top -->
 
     <hr />
     <div id="list" class="row">
@@ -67,22 +68,17 @@
             <table class="table table-striped" cellspacing="0" cellpadding="0">
                 <thead>
                 <tr>
-                    <th>Descrição</th>
+                    <th>Data</th>
                     <th>Valor</th>
-                    <th class="actions">Ações</th>
+                    <th>Situação</th>
                 </tr>
                 </thead>
                 <tbody>
 
-                <tr th:each="anuncio : ${anuncios}">
-                    <td th:text="${anuncio.descricao}"></td>
-                    <td th:text="${anuncio.valor}"></td>
-                    <td class="actions">
-                        <a class="btn btn-success btn-xs" href="view.html">Visualizar</a>
-                        <a class="btn btn-warning btn-xs" href="edit.html">Proposta</a>
-                        <a class="btn btn-danger btn-xs"  href="#" data-toggle="modal" data-target="#delete-modal">e-mail</a>
-                        <a class="btn btn-warning btn-xs" href="edit.html">Compartilhar</a>
-                    </td>
+                <tr th:each="proposta : ${propostaList}">
+                    <td th:text="${proposta.data}"></td>
+                    <td th:text="${proposta.valor}"></td>
+                    <td th:text="${proposta.status}"></td>
                 </tr>
 
                 </tbody>
@@ -91,20 +87,15 @@
         </div>
     </div> <!-- /#list -->
 
-    <div id="bottom" class="row">
-        <div class="col-md-12">
-
-            <ul class="pagination">
-                <li class="disabled"><a>&lt; Anterior</a></li>
-                <li class="disabled"><a>1</a></li>
-                <li><a href="#">2</a></li>
-                <li><a href="#">3</a></li>
-                <li class="next"><a href="#" rel="next">Próximo &gt;</a></li>
-            </ul><!-- /.pagination -->
-
+        <div id="actions" class="row">
+            <div class="col-md-12">
+                <button type="submit" class="btn btn-primary">Aceitar</button>
+                <button type="submit" class="btn btn-primary">Recusar</button>
+                <a th:href="@{/listaAnuncios}" class="btn btn-default">Voltar</a>
+            </div>
         </div>
-    </div> <!-- /#bottom -->
-    </form>
+
+     </form>
 </div>
 
 </body>

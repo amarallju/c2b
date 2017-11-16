@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Builder
 @Data
@@ -21,6 +22,7 @@ public class PropostaAnuncio {
     private Long id;
     private Long idAnuncio;
     private BigDecimal valor;
+    private Date data;
     private Status status;
 
 }
