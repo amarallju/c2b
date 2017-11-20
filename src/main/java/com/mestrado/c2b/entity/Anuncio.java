@@ -9,6 +9,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Setter
 @Getter
@@ -36,6 +37,8 @@ public class Anuncio implements Serializable{
 
     private Status status;
 
+    private String descricaoCategria;
 
+    private BigDecimal valorProposta;
 
 }

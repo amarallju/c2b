@@ -68,6 +68,7 @@
                 <thead>
                 <tr>
                     <th>Descrição</th>
+                    <th>Categoria</th>
                     <th>Valor</th>
                     <th class="actions">Ações</th>
                 </tr>
@@ -76,10 +77,11 @@
 
                 <tr th:each="anuncio : ${anuncios}">
                     <td th:text="${anuncio.descricao}"></td>
+                    <td th:text="${anuncio.descricaoCategria}"></td>
                     <td th:text="${anuncio.valor}"></td>
                     <td class="actions">
-                        <a class="btn btn-success btn-xs" th:href="@{/detalheAnuncio(${anuncio.id})}">Visualizar</a>
-                        <a class="btn btn-warning btn-xs" href="edit.html">Proposta</a>
+                        <a class="btn btn-success btn-xs" th:href="@{/detalheAnuncio} + '/'+ ${anuncio.id}">Visualizar</a>
+                        <a class="btn btn-warning btn-xs" th:href="@{/proposta} + '/'+ ${anuncio.id}">Proposta</a>
                         <a class="btn btn-danger btn-xs"  href="#" data-toggle="modal" data-target="#delete-modal">e-mail</a>
                         <a class="btn btn-warning btn-xs" href="edit.html">Compartilhar</a>
                     </td>
@@ -91,19 +93,6 @@
         </div>
     </div> <!-- /#list -->
 
-    <div id="bottom" class="row">
-        <div class="col-md-12">
-
-            <ul class="pagination">
-                <li class="disabled"><a>&lt; Anterior</a></li>
-                <li class="disabled"><a>1</a></li>
-                <li><a href="#">2</a></li>
-                <li><a href="#">3</a></li>
-                <li class="next"><a href="#" rel="next">Próximo &gt;</a></li>
-            </ul><!-- /.pagination -->
-
-        </div>
-    </div> <!-- /#bottom -->
     </form>
 </div>
 

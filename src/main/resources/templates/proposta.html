@@ -38,9 +38,10 @@
 
 <div id="main" class="container-fluid">
     <h3 class="page-header">Detalhe do Anúncio</h3>
-    <form class="form-horizontal" th:object="${anuncio}" th:action="@{/listaBydescricao}" method="POST" style="margin: 10px" >
+    <form class="form-horizontal" th:object="${anuncio}" th:action="@{/saveProposta}" method="POST" style="margin: 10px" >
 
             <div class="row">
+
                 <div class="col-md-4">
                     <p><strong>Descrição</strong></p>
                     <p th:text="*{descricao}"></p>
@@ -55,50 +56,23 @@
                     <p><strong>Valor</strong></p>
                     <p th:text="*{valor}"></p>
                 </div>
-
-                <div class="col-md-4">
-                    <p><strong>Situaçao</strong></p>
-                    <p th:text="*{status}"></p>
-                </div>
             </div>
 
     <hr />
-
-        <div class="col-md-3">
-            <h2>Lista de Propostas</h2>
+        <div class="row">
+            <fieldset>
+                <div class="form-group col-md-4">
+                    <label>Valor da Proposta</label>
+                    <input th:field="*{valorProposta}" type="text" class="form-control" id="valor" autofocus="autofocus"
+                           placeholder="Informe o Valor da Proposta"/>
+                </div>
+            </fieldset>
         </div>
-    <div id="list" class="row">
-        <div class="table-responsive col-md-12">
-            <table class="table table-striped" cellspacing="0" cellpadding="0">
-                <thead>
-                <tr>
-                    <th>Data</th>
-                    <th>Valor da Proposta</th>
-                    <th>Situação</th>
-                </tr>
-                </thead>
-                <tbody>
-
-                <tr th:each="proposta : ${propostaList}">
-                    <td th:text="${#dates.format(proposta.data, 'dd-MMM-yyyy')}"></td>
-                    <td th:text="${proposta.valor}"></td>
-                    <td th:text="${proposta.status}"></td>
-                    <td class="actions">
-                        <a class="btn btn-success btn-xs"  href="#" >Aceitar</a>
-                        <a class="btn btn-danger btn-xs" th:href="@{/recusarProposta} + '/'+ ${proposta.id}">Recusar</a>
-                    </td>
-
-                </tr>
-
-                </tbody>
-            </table>
-
-        </div>
-    </div> <!-- /#list -->
 
         <div id="actions" class="row">
             <div class="col-md-12">
-                <a th:href="@{/listaAnuncios}" class="btn btn-default">Voltar</a>
+                <button type="submit" class="btn btn-primary">Salvar</button>
+                <a th:href="@{/listaAnuncios}" class="btn btn-default">Cancelar</a>
             </div>
         </div>
 

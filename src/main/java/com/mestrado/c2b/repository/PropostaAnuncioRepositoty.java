@@ -11,5 +11,7 @@ import java.util.List;
 public interface PropostaAnuncioRepositoty extends CrudRepository<PropostaAnuncio, Long> {
 
 
-    List<PropostaAnuncio> findByIdAnuncio(Long Id);
+    List<PropostaAnuncio> findByIdAnuncio(Long idAnuncio);
+
+    PropostaAnuncio findById(Long id);
 }

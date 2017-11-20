@@ -2,6 +2,7 @@ package com.mestrado.c2b.controller;
 
 import com.mestrado.c2b.entity.Anuncio;
 import com.mestrado.c2b.entity.Categoria;
+import com.mestrado.c2b.entity.PropostaAnuncio;
 import com.mestrado.c2b.repository.AnuncioRepositoty;
 import com.mestrado.c2b.repository.CategoriaRepositoty;
 import com.mestrado.c2b.repository.PropostaAnuncioRepositoty;
@@ -11,8 +12,10 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -23,6 +26,8 @@ public class AnuncioApiRestController {
     private CategoriaRepositoty categoriaRepositoty;
     private PropostaAnuncioRepositoty propostaAnuncioRepositoty;
 
+    private Long ID_ANUNCIO = new Long("0");
+
     @Autowired
     public AnuncioApiRestController( AnuncioRepositoty anuncioRepositoty, CategoriaRepositoty categoriaRepositoty,
             PropostaAnuncioRepositoty propostaAnuncioRepositoty) {
@@ -31,11 +36,30 @@ public class AnuncioApiRestController {
         this.propostaAnuncioRepositoty = propostaAnuncioRepositoty;
     }
 
-    @GetMapping(value = "/detalheAnuncio{id}")
-    public String detalheAnuncio(@RequestParam(value="id", defaultValue="10") Long id, Model model) {
+    @RequestMapping(value = "/proposta/{id}", method = RequestMethod.GET)
+    public String propostaAnuncio(HttpServletRequest request, @PathVariable String id, Model model) {
 
-        model.addAttribute("propostaList", propostaAnuncioRepositoty.findByIdAnuncio(id));
-        model.addAttribute("anuncio", anuncioRepositoty.findById(id));
+        Anuncio anuncio = anuncioRepositoty.findById(new Long(id));
+        List<PropostaAnuncio> propostaList = propostaAnuncioRepositoty.findByIdAnuncio(new Long(id));
+        ID_ANUNCIO = new Long(id);
+
+        anuncio.setDescricaoCategria(pesquisaDescricaoCategoria(anuncio.getIdCategoria()));
+
+        model.addAttribute("anuncio", anuncio);
+
+        return "proposta";
+    }
+
+    @RequestMapping(value = "/detalheAnuncio/{id}", method = RequestMethod.GET)
+    public String detalheAnuncio(HttpServletRequest request, @PathVariable String id, Model model) {
+
+        Anuncio anuncio = anuncioRepositoty.findById(new Long(id));
+        List<PropostaAnuncio> propostaList = propostaAnuncioRepositoty.findByIdAnuncio(new Long(id));
+
+        anuncio.setDescricaoCategria(pesquisaDescricaoCategoria(anuncio.getIdCategoria()));
+
+        model.addAttribute("propostaList", propostaList);
+        model.addAttribute("anuncio", anuncio);
 
         return "detalheAnuncio";
     }
@@ -51,6 +75,11 @@ public class AnuncioApiRestController {
     @RequestMapping(value = "/listaAnuncios", method = RequestMethod.GET)
     public String listaAnuncios(Model model) {
         List<Anuncio> listaAnuncios = (List<Anuncio>) anuncioRepositoty.findAll();
+
+        for (Anuncio anuncio: listaAnuncios){
+            anuncio.setDescricaoCategria(pesquisaDescricaoCategoria(anuncio.getIdCategoria()));
+        }
+
         if (listaAnuncios != null) {
             model.addAttribute("anuncios", listaAnuncios);
             model.addAttribute("anuncio", new Anuncio());
@@ -67,6 +96,11 @@ public class AnuncioApiRestController {
             listaAnuncios = anuncioRepositoty.findByDescricao(anuncio.getDescricao());
 
         }
+
+        for (Anuncio anunciolista: listaAnuncios){
+            anunciolista.setDescricaoCategria(pesquisaDescricaoCategoria(anunciolista.getIdCategoria()));
+        }
+
         if (listaAnuncios != null) {
             model.addAttribute("anuncios", listaAnuncios);
             model.addAttribute("anuncio", new Anuncio());
@@ -81,12 +115,61 @@ public class AnuncioApiRestController {
         anuncioRepositoty.save(anuncio);
 
         List<Anuncio> listaAnuncios = (List<Anuncio>) anuncioRepositoty.findAll();
+
+        for (Anuncio anunciolista: listaAnuncios){
+            anunciolista.setDescricaoCategria(pesquisaDescricaoCategoria(anunciolista.getIdCategoria()));
+        }
+
         if (listaAnuncios != null) {
             model.addAttribute("anuncios", listaAnuncios);
             model.addAttribute("anuncio", new Anuncio());
         }
         return "index";
 
+    }
+
+    @PostMapping(value = "/saveProposta")
+    public String adicionarPropostaAnuncio(@Valid Anuncio anuncio, BindingResult result, Model model) {
+
+        PropostaAnuncio proposta = new PropostaAnuncio();
+        proposta.setData(new Date());
+        proposta.setIdAnuncio(ID_ANUNCIO);
+        proposta.setValor(anuncio.getValorProposta());
+        proposta.setStatus(PropostaAnuncio.Status.ABERTO);
+
+        propostaAnuncioRepositoty.save(proposta);
+
+        List<Anuncio> listaAnuncios = (List<Anuncio>) anuncioRepositoty.findAll();
+
+        for (Anuncio anunciolista: listaAnuncios){
+            anunciolista.setDescricaoCategria(pesquisaDescricaoCategoria(anunciolista.getIdCategoria()));
+        }
+
+        if (listaAnuncios != null) {
+            model.addAttribute("anuncios", listaAnuncios);
+            model.addAttribute("anuncio", new Anuncio());
+        }
+        return "index";
+
+    }
+
+    @RequestMapping(value = "/recusarProposta/{id}", method = RequestMethod.GET)
+    public String recusarProposta(HttpServletRequest request, @PathVariable String id, Model model) {
+
+        PropostaAnuncio proposta = propostaAnuncioRepositoty.findById(new Long(id));
+        proposta.setStatus(PropostaAnuncio.Status.RECUSADO);
+
+        propostaAnuncioRepositoty.save(proposta);
+
+        Anuncio anuncio = anuncioRepositoty.findById(ID_ANUNCIO);
+        List<PropostaAnuncio> propostaList = propostaAnuncioRepositoty.findByIdAnuncio(ID_ANUNCIO);
+
+        anuncio.setDescricaoCategria(pesquisaDescricaoCategoria(anuncio.getIdCategoria()));
+
+        model.addAttribute("propostaList", propostaList);
+        model.addAttribute("anuncio", anuncio);
+
+        return "detalheAnuncio";
     }
 
     private List<Categoria> listaCategoriaAll(){
@@ -120,5 +203,13 @@ public class AnuncioApiRestController {
         listaCategorias.addAll(categoriaRepositoty.findAll());
 
         return listaCategorias;
+    }
+
+
+    private String pesquisaDescricaoCategoria(Long idCategoria){
+
+        Categoria categoria = categoriaRepositoty.findById(idCategoria);
+        return categoria.getDescricao();
+
     }
 }
