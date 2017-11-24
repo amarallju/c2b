@@ -25,8 +25,8 @@ public class UsuarioController {
     private UsuarioRepositoty usuarioRepositoty;
     private AnuncioRepositoty anuncioRepositoty;
 
-    private String NOME_USUARIO = "";
-    private Long ID_USUARIO = new Long("0");
+    public String NOME_USUARIO = "";
+    public Long ID_USUARIO = new Long("0");
 
     @Autowired
     public UsuarioController(AnuncioRepositoty anuncioRepositoty, CategoriaRepositoty categoriaRepositoty,

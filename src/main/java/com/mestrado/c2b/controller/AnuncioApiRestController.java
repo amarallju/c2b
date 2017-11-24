@@ -3,9 +3,11 @@ package com.mestrado.c2b.controller;
 import com.mestrado.c2b.entity.Anuncio;
 import com.mestrado.c2b.entity.Categoria;
 import com.mestrado.c2b.entity.PropostaAnuncio;
+import com.mestrado.c2b.entity.Usuario;
 import com.mestrado.c2b.repository.AnuncioRepositoty;
 import com.mestrado.c2b.repository.CategoriaRepositoty;
 import com.mestrado.c2b.repository.PropostaAnuncioRepositoty;
+import com.mestrado.c2b.repository.UsuarioRepositoty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,15 +27,20 @@ public class AnuncioApiRestController {
     private AnuncioRepositoty anuncioRepositoty;
     private CategoriaRepositoty categoriaRepositoty;
     private PropostaAnuncioRepositoty propostaAnuncioRepositoty;
+    private UsuarioRepositoty usuarioRepositoty;
 
     private Long ID_ANUNCIO = new Long("0");
 
+    public String NOME_USUARIO = "";
+    public Long ID_USUARIO = new Long("0");
+
     @Autowired
     public AnuncioApiRestController( AnuncioRepositoty anuncioRepositoty, CategoriaRepositoty categoriaRepositoty,
-            PropostaAnuncioRepositoty propostaAnuncioRepositoty) {
+            PropostaAnuncioRepositoty propostaAnuncioRepositoty, UsuarioRepositoty usuarioRepositoty) {
         this.anuncioRepositoty = anuncioRepositoty;
         this.categoriaRepositoty = categoriaRepositoty;
         this.propostaAnuncioRepositoty = propostaAnuncioRepositoty;
+        this.usuarioRepositoty = usuarioRepositoty;
     }
 
     @RequestMapping(value = "/proposta/{id}", method = RequestMethod.GET)
@@ -80,6 +87,8 @@ public class AnuncioApiRestController {
             anuncio.setDescricaoCategria(pesquisaDescricaoCategoria(anuncio.getIdCategoria()));
         }
 
+        model.addAttribute("usuarioLogado", NOME_USUARIO);
+
         if (listaAnuncios != null) {
             model.addAttribute("anuncios", listaAnuncios);
             model.addAttribute("anuncio", new Anuncio());
@@ -101,6 +110,8 @@ public class AnuncioApiRestController {
             anunciolista.setDescricaoCategria(pesquisaDescricaoCategoria(anunciolista.getIdCategoria()));
         }
 
+        model.addAttribute("usuarioLogado", NOME_USUARIO);
+
         if (listaAnuncios != null) {
             model.addAttribute("anuncios", listaAnuncios);
             model.addAttribute("anuncio", new Anuncio());
@@ -112,6 +123,7 @@ public class AnuncioApiRestController {
     public String adicionarAnuncio(@Valid Anuncio anuncio, BindingResult result, Model model) {
 
         anuncio.setStatus(Anuncio.Status.ABERTO);
+        anuncio.setIdUsuario(ID_USUARIO);
         anuncioRepositoty.save(anuncio);
 
         List<Anuncio> listaAnuncios = (List<Anuncio>) anuncioRepositoty.findAll();
@@ -119,6 +131,8 @@ public class AnuncioApiRestController {
         for (Anuncio anunciolista: listaAnuncios){
             anunciolista.setDescricaoCategria(pesquisaDescricaoCategoria(anunciolista.getIdCategoria()));
         }
+
+        model.addAttribute("usuarioLogado", NOME_USUARIO);
 
         if (listaAnuncios != null) {
             model.addAttribute("anuncios", listaAnuncios);
@@ -144,6 +158,8 @@ public class AnuncioApiRestController {
         for (Anuncio anunciolista: listaAnuncios){
             anunciolista.setDescricaoCategria(pesquisaDescricaoCategoria(anunciolista.getIdCategoria()));
         }
+
+        model.addAttribute("usuarioLogado", NOME_USUARIO);
 
         if (listaAnuncios != null) {
             model.addAttribute("anuncios", listaAnuncios);
@@ -171,6 +187,42 @@ public class AnuncioApiRestController {
 
         return "detalheAnuncio";
     }
+
+    @PostMapping(value = "/makeLogin")
+    public String makeLogin(@Valid Usuario usuario, BindingResult result, Model model) {
+
+        Usuario usuarioSave = new Usuario();
+
+        Usuario usuarioEmail = usuarioRepositoty.findByEmail(usuario.getEmail());
+        if (usuarioEmail == null){
+            return "login";
+        }
+
+        usuarioSave = usuarioRepositoty.findBySenha(usuario.getSenha());
+        if (usuarioSave == null){
+
+            return "login";
+        }
+
+        NOME_USUARIO = usuarioSave.getNome();
+        ID_USUARIO = usuarioSave.getId();
+
+        List<Anuncio> listaAnuncios = (List<Anuncio>) anuncioRepositoty.findAll();
+
+        for (Anuncio anunciolista: listaAnuncios){
+            anunciolista.setDescricaoCategria(pesquisaDescricaoCategoria(anunciolista.getIdCategoria()));
+        }
+
+        model.addAttribute("usuarioLogado", NOME_USUARIO);
+
+        if (listaAnuncios != null) {
+            model.addAttribute("anuncios", listaAnuncios);
+            model.addAttribute("anuncio", new Anuncio());
+        }
+        return "index";
+    }
+
+
 
     private List<Categoria> listaCategoriaAll(){
 

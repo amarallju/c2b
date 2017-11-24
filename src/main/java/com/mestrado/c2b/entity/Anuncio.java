@@ -41,4 +41,7 @@ public class Anuncio implements Serializable{
 
     private BigDecimal valorProposta;
 
+    @Column(nullable = false)
+    private Long idUsuario;
+
 }
