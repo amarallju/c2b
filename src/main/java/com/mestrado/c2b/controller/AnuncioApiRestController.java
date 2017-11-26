@@ -9,6 +9,8 @@ import com.mestrado.c2b.repository.CategoriaRepositoty;
 import com.mestrado.c2b.repository.PropostaAnuncioRepositoty;
 import com.mestrado.c2b.repository.UsuarioRepositoty;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -33,6 +35,10 @@ public class AnuncioApiRestController {
 
     public String NOME_USUARIO = "";
     public Long ID_USUARIO = new Long("0");
+    public String EMAIL_USUARIO = "";
+
+    @Autowired
+    private JavaMailSender mailSender;
 
     @Autowired
     public AnuncioApiRestController( AnuncioRepositoty anuncioRepositoty, CategoriaRepositoty categoriaRepositoty,
@@ -41,6 +47,10 @@ public class AnuncioApiRestController {
         this.categoriaRepositoty = categoriaRepositoty;
         this.propostaAnuncioRepositoty = propostaAnuncioRepositoty;
         this.usuarioRepositoty = usuarioRepositoty;
+
+        NOME_USUARIO = "";
+        ID_USUARIO = new Long("0");
+        EMAIL_USUARIO = "";
     }
 
     @RequestMapping(value = "/proposta/{id}", method = RequestMethod.GET)
@@ -119,12 +129,18 @@ public class AnuncioApiRestController {
         return "index";
     }
 
+
     @PostMapping(value = "/save")
     public String adicionarAnuncio(@Valid Anuncio anuncio, BindingResult result, Model model) {
 
         anuncio.setStatus(Anuncio.Status.ABERTO);
         anuncio.setIdUsuario(ID_USUARIO);
         anuncioRepositoty.save(anuncio);
+
+        List<Usuario> listausuario = usuarioRepositoty.findByTipo(1);
+        for(Usuario usuarioEmail : listausuario){
+            sendMail(usuarioEmail.getEmail(), "Olá, Novo Anuncio inserido no C2B que pode ser do seu interesse...Corre lá para ver");
+        }
 
         List<Anuncio> listaAnuncios = (List<Anuncio>) anuncioRepositoty.findAll();
 
@@ -152,6 +168,9 @@ public class AnuncioApiRestController {
         proposta.setStatus(PropostaAnuncio.Status.ABERTO);
 
         propostaAnuncioRepositoty.save(proposta);
+
+        Usuario usuarioEmail = usuarioRepositoty.findById(ID_ANUNCIO);
+        sendMail(usuarioEmail.getEmail(), "Olá, Uma nova proposta foi adicionado ao seu Anúncio. Corre lá para ver");
 
         List<Anuncio> listaAnuncios = (List<Anuncio>) anuncioRepositoty.findAll();
 
@@ -198,14 +217,20 @@ public class AnuncioApiRestController {
             return "login";
         }
 
-        usuarioSave = usuarioRepositoty.findBySenha(usuario.getSenha());
-        if (usuarioSave == null){
-
-            return "login";
+        List<Usuario> usuarioListSenha = usuarioRepositoty.findBySenha(usuario.getSenha());
+        for(Usuario listSenha: usuarioListSenha){
+            if (listSenha.getEmail().equals(usuarioEmail.getEmail())){
+                if (!listSenha.getSenha().equals(usuarioEmail.getSenha())){
+                    return "login";
+                }else{
+                    usuarioSave = listSenha;
+                }
+            }
         }
 
         NOME_USUARIO = usuarioSave.getNome();
         ID_USUARIO = usuarioSave.getId();
+        EMAIL_USUARIO = usuarioSave.getEmail();
 
         List<Anuncio> listaAnuncios = (List<Anuncio>) anuncioRepositoty.findAll();
 
@@ -222,7 +247,27 @@ public class AnuncioApiRestController {
         return "index";
     }
 
+    @GetMapping("/makeLogout")
+    public String loginUsuario(Model model) {
 
+        NOME_USUARIO = "";
+        ID_USUARIO = new Long("0");
+        EMAIL_USUARIO = "";
+
+        List<Anuncio> listaAnuncios = (List<Anuncio>) anuncioRepositoty.findAll();
+
+        for (Anuncio anunciolista: listaAnuncios){
+            anunciolista.setDescricaoCategria(pesquisaDescricaoCategoria(anunciolista.getIdCategoria()));
+        }
+
+        model.addAttribute("usuarioLogado", NOME_USUARIO);
+
+        if (listaAnuncios != null) {
+            model.addAttribute("anuncios", listaAnuncios);
+            model.addAttribute("anuncio", new Anuncio());
+        }
+        return "index";
+    }
 
     private List<Categoria> listaCategoriaAll(){
 
@@ -263,5 +308,57 @@ public class AnuncioApiRestController {
         Categoria categoria = categoriaRepositoty.findById(idCategoria);
         return categoria.getDescricao();
 
+    }
+
+    @RequestMapping(path = "/emailSend", method = RequestMethod.GET)
+    public String sendMail(Model model) {
+        SimpleMailMessage message = new SimpleMailMessage();
+
+        message.setText("Olá, Novo Anuncio inserido no C2B que pode ser do seu interesse...Corre lá para ver");
+        message.setTo(EMAIL_USUARIO);
+        message.setSubject("C2B");
+        message.setFrom("amarallju@gmail.com");
+
+        List<Anuncio> listaAnuncios = (List<Anuncio>) anuncioRepositoty.findAll();
+
+        for (Anuncio anunciolista: listaAnuncios){
+            anunciolista.setDescricaoCategria(pesquisaDescricaoCategoria(anunciolista.getIdCategoria()));
+        }
+
+        model.addAttribute("usuarioLogado", NOME_USUARIO);
+
+        if (listaAnuncios != null) {
+            model.addAttribute("anuncios", listaAnuncios);
+            model.addAttribute("anuncio", new Anuncio());
+        }
+
+        try {
+            mailSender.send(message);
+            model.addAttribute("mailSender", "Email enviado com sucesso!");
+            return "index";
+        } catch (Exception e) {
+            e.printStackTrace();
+            mailSender.send(message);
+            model.addAttribute("mailSender", "Erro ao enviar email.");
+            return "index";
+        }
+    }
+
+    private String sendMail(String email, String texto) {
+
+        SimpleMailMessage message = new SimpleMailMessage();
+
+        message.setText(texto);
+        message.setTo(email);
+        message.setSubject("C2B");
+        message.setFrom("amarallju@gmail.com");
+
+        try {
+            mailSender.send(message);
+            return "Email enviado com sucesso!";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Erro ao enviar email.";
+        }
     }
 }

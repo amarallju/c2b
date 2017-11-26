@@ -25,9 +25,6 @@ public class UsuarioController {
     private UsuarioRepositoty usuarioRepositoty;
     private AnuncioRepositoty anuncioRepositoty;
 
-    public String NOME_USUARIO = "";
-    public Long ID_USUARIO = new Long("0");
-
     @Autowired
     public UsuarioController(AnuncioRepositoty anuncioRepositoty, CategoriaRepositoty categoriaRepositoty,
                              UsuarioRepositoty usuarioRepositoty) {
@@ -56,15 +53,13 @@ public class UsuarioController {
     public String adicionarUsuario(@Valid Usuario usuario, BindingResult result, Model model) {
 
         Usuario usuarioSave = usuarioRepositoty.save(usuario);
-
-        NOME_USUARIO = usuarioSave.getNome();
-        ID_USUARIO = usuarioSave.getId();
-
         List<Anuncio> listaAnuncios = (List<Anuncio>) anuncioRepositoty.findAll();
 
         for (Anuncio anunciolista: listaAnuncios){
             anunciolista.setDescricaoCategria(pesquisaDescricaoCategoria(anunciolista.getIdCategoria()));
         }
+
+        model.addAttribute("usuarioLogado", "");
 
         if (listaAnuncios != null) {
             model.addAttribute("anuncios", listaAnuncios);
