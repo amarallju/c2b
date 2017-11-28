@@ -169,9 +169,10 @@ public class AnuncioApiRestController {
 
         propostaAnuncioRepositoty.save(proposta);
 
-        Usuario usuarioEmail = usuarioRepositoty.findById(ID_ANUNCIO);
-        sendMail(usuarioEmail.getEmail(), "Olá, Uma nova proposta foi adicionado ao seu Anúncio. Corre lá para ver");
-
+        Usuario usuarioEmail = usuarioRepositoty.findById(ID_USUARIO);
+        if (usuarioEmail != null) {
+            sendMail(usuarioEmail.getEmail(), "Olá, Uma nova proposta foi adicionado ao seu Anúncio. Corre lá para ver");
+        }
         List<Anuncio> listaAnuncios = (List<Anuncio>) anuncioRepositoty.findAll();
 
         for (Anuncio anunciolista: listaAnuncios){

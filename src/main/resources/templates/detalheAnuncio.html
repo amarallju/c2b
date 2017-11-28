@@ -34,7 +34,7 @@
 
 <div id="main" class="container-fluid">
     <h3 class="page-header">Detalhe do Anúncio</h3>
-    <form class="form-horizontal" th:object="${anuncio}" th:action="@{/listaBydescricao}" method="POST" style="margin: 10px" >
+    <form class="form-horizontal" th:object="${anuncio}" action="https://pagseguro.uol.com.br/checkout/v2/cart.html?action=add" method="POST" style="margin: 10px" >
 
             <div class="row">
                 <div class="col-md-4">
@@ -80,8 +80,14 @@
                     <td th:text="${proposta.valor}"></td>
                     <td th:text="${proposta.status}"></td>
                     <td class="actions">
-                        <a class="btn btn-success btn-xs"  href="#" >Aceitar</a>
-                        <a class="btn btn-danger btn-xs" th:href="@{/recusarProposta} + '/'+ ${proposta.id}">Recusar</a>
+                        <a th:if="*{proposta.status} == 'ABERTO'" class="btn btn-danger btn-xs" th:href="@{/recusarProposta} + '/'+ ${proposta.id}">Recusar</a>
+
+                            <!-- NÃO EDITE OS COMANDOS DAS LINHAS ABAIXO -->
+                            <input type="hidden" name="itemCode" value="FAB28AB10D0D2F7CC49B4F83964BBB2B" />
+                            <input type="hidden" name="iot" value="button" />
+                            <input type="image" src="https://stc.pagseguro.uol.com.br/public/img/botoes/pagamentos/209x48-comprar-azul-assina.gif" name="submit" alt="Pague com PagSeguro - é rápido, grátis e seguro!" />
+                        <script type="text/javascript" src="https://stc.pagseguro.uol.com.br/pagseguro/api/v2/checkout/pagseguro.lightbox.js"></script>
+                        <!-- FINAL FORMULARIO BOTAO PAGSEGURO -->
                     </td>
 
                 </tr>

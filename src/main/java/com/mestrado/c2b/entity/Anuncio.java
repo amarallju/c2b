@@ -19,7 +19,7 @@ import java.util.List;
 public class Anuncio implements Serializable{
 
     public enum Status {
-        ABERTO, EM_ANALISE, RECUSADO, FINALIZADO
+        ABERTO, ACEITO, RECUSADO
     }
 
     @Id

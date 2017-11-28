@@ -20,7 +20,7 @@ import java.util.Date;
 public class PropostaAnuncio {
 
     public enum Status {
-        ABERTO, EM_ANALISE, RECUSADO, FINALIZADO
+        ABERTO, ACEITO, RECUSADO
     }
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
