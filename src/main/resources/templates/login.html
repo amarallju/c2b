@@ -29,6 +29,7 @@
 </nav>
 
 <div id="main" class="container-fluid">
+    <hr />
     <h3 class="page-header">Login C2B</h3>
     <form class="form-horizontal" th:object="${usuario}" th:action="@{/makeLogin}" method="POST" style="margin: 10px" >
         <div class="row">
@@ -41,7 +42,7 @@
 
                 <div class="form-group col-md-4">
                     <label>Senha</label>
-                    <input th:field="*{senha}" type="text" class="form-control" id="senha" autofocus="autofocus"
+                    <input th:field="*{senha}" type="password" class="form-control" id="senha" autofocus="autofocus"
                            placeholder="Informe a senha"/>
                 </div>
             </fieldset>
