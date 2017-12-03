@@ -100,9 +100,17 @@ PagSeguroLightbox({
                     <td class="actions">
                         <a class="btn btn-danger btn-xs" th:href="@{/recusarProposta} + '/'+ ${proposta.id}">Recusar</a>
 
-                        <button onclick="PagSeguroLightbox('38DAA0390C0CECBAA44EDFA10A26C9CA')">PagSeguro</button>
-                        <script type="text/javascript"
-                                src="https://stc.sandbox.pagseguro.uol.com.br/pagseguro/api/v2/checkout/pagseguro.lightbox.js"></script>
+                         <!-- INICIO FORMULARIO BOTAO PAGSEGURO -->
+                            <!-- NÃO EDITE OS COMANDOS DAS LINHAS ABAIXO -->
+                            <input type="hidden" name="itemCode" value="14A5DD0EA9A9806AA405EF9712A9A30B" />
+                            <input type="hidden" name="iot" value="button" />
+                            <input type="image" src="https://stc.pagseguro.uol.com.br/public/img/botoes/pagamentos/84x35-comprar-azul.gif" name="submit" alt="Pague com PagSeguro - é rápido, grátis e seguro!" />
+                        <script type="text/javascript" src="https://stc.pagseguro.uol.com.br/pagseguro/api/v2/checkout/pagseguro.lightbox.js"></script>
+                        <!-- FINAL FORMULARIO BOTAO PAGSEGURO -->
+
+
+
+
                     </td>
 
                 </tr>

@@ -28,7 +28,7 @@
 <div id="main" class="container-fluid">
     <hr />
     <h3 class="page-header">Incluir Anúncio de Compra</h3>
-    <form class="form-horizontal" th:object="${anuncio}" th:action="@{/save}" method="POST" style="margin: 10px" >
+    <form enctype="multipart/form-data" class="form-horizontal" th:object="${anuncio}" th:action="@{/save}" method="POST" style="margin: 10px" >
         <div class="row">
             <fieldset>
                 <div class="form-group col-md-4">

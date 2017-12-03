@@ -8,19 +8,27 @@ import com.mestrado.c2b.repository.AnuncioRepositoty;
 import com.mestrado.c2b.repository.CategoriaRepositoty;
 import com.mestrado.c2b.repository.PropostaAnuncioRepositoty;
 import com.mestrado.c2b.repository.UsuarioRepositoty;
+import com.mestrado.c2b.storage.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/")
@@ -40,13 +48,18 @@ public class AnuncioApiRestController {
     @Autowired
     private JavaMailSender mailSender;
 
+    private final StorageService storageService;
+
+
     @Autowired
     public AnuncioApiRestController( AnuncioRepositoty anuncioRepositoty, CategoriaRepositoty categoriaRepositoty,
-            PropostaAnuncioRepositoty propostaAnuncioRepositoty, UsuarioRepositoty usuarioRepositoty) {
+            PropostaAnuncioRepositoty propostaAnuncioRepositoty, UsuarioRepositoty usuarioRepositoty,
+                                     StorageService storageService) {
         this.anuncioRepositoty = anuncioRepositoty;
         this.categoriaRepositoty = categoriaRepositoty;
         this.propostaAnuncioRepositoty = propostaAnuncioRepositoty;
         this.usuarioRepositoty = usuarioRepositoty;
+        this.storageService = storageService;
 
         NOME_USUARIO = "";
         ID_USUARIO = new Long("0");
@@ -129,9 +142,13 @@ public class AnuncioApiRestController {
         return "index";
     }
 
-
     @PostMapping(value = "/save")
     public String adicionarAnuncio(@Valid Anuncio anuncio, BindingResult result, Model model) {
+
+        anuncio.setImagem(storageService.loadAll().map(
+                path -> MvcUriComponentsBuilder.fromMethodName(AnuncioApiRestController.class,
+                        "serveFile", path.getFileName().toString()).build().toString())
+                .toString());
 
         anuncio.setStatus(Anuncio.Status.ABERTO);
         anuncio.setIdUsuario(ID_USUARIO);
@@ -268,6 +285,18 @@ public class AnuncioApiRestController {
             model.addAttribute("anuncio", new Anuncio());
         }
         return "index";
+    }
+
+
+    @GetMapping("/imagem/{id}")
+    @ResponseBody
+    public ResponseEntity<Resource> serveFile(@PathVariable String id, Model model) {
+
+        Anuncio anuncio = anuncioRepositoty.findById(new Long(id));
+
+        Resource file = storageService.loadAsResource(anuncio.getImagem());
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
+                "attachment; filename=\"" + file.getFilename() + "\"").body(file);
     }
 
     private List<Categoria> listaCategoriaAll(){

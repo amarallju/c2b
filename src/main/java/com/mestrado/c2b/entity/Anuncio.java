@@ -44,4 +44,5 @@ public class Anuncio implements Serializable{
     @Column(nullable = false)
     private Long idUsuario;
 
+    private String imagem;
 }
